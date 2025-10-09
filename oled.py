@@ -1,6 +1,5 @@
 from machine import Pin, SoftI2C
 import ssd1306_driver as ssd1306
-from time import sleep
 
 # ESP32 Pin assignment
 i2c = SoftI2C(scl=Pin(22), sda=Pin(21))
