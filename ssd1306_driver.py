@@ -22,6 +22,10 @@ SET_PRECHARGE = const(0xD9)
 SET_VCOM_DESEL = const(0xDB)
 SET_CHARGE_PUMP = const(0x8D)
 
+# Custom degree symbol
+p0 = bytearray([0x18, 0x24, 0x24, 0x18, 0x00, 0x00, 0x00, 0x00])
+DEGREE = framebuf.FrameBuffer(p0, 8, 8, framebuf.MONO_HLSB)
+
 
 class SSD1306:
     def __init__(self, width, height, external_vcc):
@@ -108,6 +112,9 @@ class SSD1306:
 
     def text(self, string, x, y, col=1):
         self.framebuf.text(string, x, y, col)
+
+    def blit(self, fbuf, x, y, key=-1, palette=None):
+        self.framebuf.blit(fbuf, x, y, key, palette)
 
 
 class SSD1306_I2C(SSD1306):
