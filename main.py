@@ -7,7 +7,7 @@ import wifi
 # from time import sleep    # activate when measure every 30 Min !
 
 wifi.connect()
-oled.oled_hello()
+oled.start_time_display()
 dht11.dht11()
 
 # measure every 30 Min
