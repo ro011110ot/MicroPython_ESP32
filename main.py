@@ -12,5 +12,5 @@ dht11.dht11()
 
 # measure every 30 Min
 # while True:
-    # dht11.dht11()
-    # sleep(1800)
+#   dht11.dht11()
+#   sleep(1800)

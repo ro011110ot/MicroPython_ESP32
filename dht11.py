@@ -5,13 +5,14 @@ import os
 
 sensor = dht.DHT11(Pin(14))
 
+
 def dht11():
     # Check if temp.csv exists, if not create it with header
     try:
-        os.stat('temp.csv')
+        os.stat("temp.csv")
     except OSError:
-        with open('temp.csv', 'w') as f:
-            f.write('date;time;temperature;humidity\n')
+        with open("temp.csv", "w") as f:
+            f.write("date;time;temperature;humidity\n")
 
     try:
         sensor.measure()
@@ -27,9 +28,9 @@ def dht11():
         csv_line = f"{date_str};{time_str};{temp} °C;{hum} %\n"
         # Write to CSV
         try:
-            with open('./temp.csv', 'a') as f:
+            with open("./temp.csv", "a") as f:
                 f.write(csv_line)
-        except OSError as e:
-            print('Failed to write to temp.csv')
-    except OSError as e:
-        print('Failed to read sensor.')
+        except OSError:
+            print("Failed to write to temp.csv")
+    except OSError:
+        print("Failed to read sensor.")
