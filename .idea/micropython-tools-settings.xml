@@ -3,6 +3,6 @@
   <component name="MicroPythonTools">
     <option name="autoClearRepl" value="false" />
     <option name="pluginEnabled" value="true" />
-    <option name="portName" value="/dev/ttyUSB1" />
+    <option name="portName" value="/dev/ttyUSB0" />
   </component>
 </project>
