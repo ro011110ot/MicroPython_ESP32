@@ -5,8 +5,8 @@ It also logs the readings to a CSV file.
 
 import dht
 from machine import Pin
-import time
 import os
+import time
 
 # Initialize the sensor
 sensor = dht.DHT11(Pin(14))
@@ -44,7 +44,7 @@ def measure() -> tuple:
         # Create directory if it doesn't exist
         if "temp_history" not in os.listdir("/"):
             os.mkdir(log_dir)
-        
+
         # Write header if file doesn't exist
         if f"{date_str}.temp.csv" not in os.listdir(log_dir):
             with open(filename, "w") as f:
@@ -54,7 +54,7 @@ def measure() -> tuple:
         with open(filename, "a") as f:
             csv_line = f"{date_str};{time_str};{temp} °C;{hum} %\n"
             f.write(csv_line)
-            
+
     except OSError as e:
         print(f"Failed to write to log file: {e}")
 

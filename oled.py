@@ -1,8 +1,9 @@
-from machine import Pin, SoftI2C
-import ssd1306_driver as ssd1306
-import time
-import weather
 import dht11
+from machine import Pin, SoftI2C
+import time
+import ssd1306_driver as ssd1306
+import weather
+
 
 # --- Global Variables ---
 # These variables are used to share state between the timer callbacks.

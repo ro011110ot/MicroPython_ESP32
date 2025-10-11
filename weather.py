@@ -3,9 +3,9 @@ This module provides a function to fetch weather data from the OpenWeatherMap AP
 """
 
 import os
-import urequests as requests
 from secrets import secrets
 import time
+import urequests as requests
 
 city = secrets["city"]
 country_code = secrets["country_code"]

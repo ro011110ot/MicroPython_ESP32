@@ -6,8 +6,8 @@ import machine
 import network
 import ntp
 import ntptime
-import time
 from secrets import secrets
+import time
 
 # WLAN configuration
 wlan = network.WLAN(network.WLAN.IF_STA)
