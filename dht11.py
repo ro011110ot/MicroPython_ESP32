@@ -46,7 +46,7 @@ def dht11():
             os.mkdir(log_dir)
         
         # Write header if file doesn't exist
-        if not filename in os.listdir(log_dir):
+        if f"{date_str}.temp.csv" not in os.listdir(log_dir):
             with open(filename, "w") as f:
                 f.write("date;time;temperature;humidity\n")
 
