@@ -2,8 +2,11 @@ from machine import Pin, SoftI2C, Timer
 import ssd1306_driver as ssd1306
 import time
 import weather
+import dht11
 
 # --- Global Variables ---
+# These variables are used to share state between the timer callbacks.
+# This is necessary because timers in MicroPython do not support passing arguments to callbacks.
 temp_val = "N/A"
 hum = "N/A"
 weather_data = None
@@ -18,33 +21,13 @@ oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c)
 # --- Functions ---
 
 
-def oled_hello():
-    """A simple test function to display text."""
-    oled.text("Hello, World 1!", 0, 0)
-    oled.text("Hello, World 2!", 0, 10)
-    oled.text("Hello, World 3!", 0, 20)
-    oled.show()
-
-
 def update_sensor_readings(timer):
     """
     Reads the last line of temp.csv and updates the global
     temperature and humidity variables.
     """
     global temp_val, hum
-    try:
-        with open("temp.csv", "r") as f:
-            lines = f.readlines()
-        if lines:
-            last_line = lines[-1]
-            parts = last_line.strip().split(";")
-            if len(parts) >= 4:
-                temp_with_unit = parts[2].strip()
-                temp_val = temp_with_unit.split(" ")[0]
-                hum = parts[3].strip()
-    except OSError:
-        temp_val = "N/A"
-        hum = "N/A"
+    temp_val, hum = dht11.dht11()
 
 
 def update_weather_data(timer):
@@ -55,44 +38,63 @@ def update_weather_data(timer):
 
 def oled_time(timer):
     """
-    Updates the OLED display with the current time and the last known
-    sensor readings from the global variables.
+    Updates the OLED display with the current date, time, and sensor readings.
+
+    Display Layout:
+    - Line 1: Date (YYYY.MM.DD)
+    - Line 3: Time (HH:MM)
+    - Line 5: Temperature (e.g., "Temp: 23.4 °C")
+    - Line 6: Humidity (e.g., "Hum: 45.6 %")
     """
     now = time.localtime()
-    date_str = "{:04d}.{:02d}.{:02d}".format(now[0], now[1], now[2])
-    time_str = "{:02d}:{:02d}".format(now[3], now[4])
+    date_str = f"{now[0]:04d}.{now[1]:02d}.{now[2]:02d}"
+    time_str = f"{now[3]:02d}:{now[4]:02d}"
 
     oled.fill(0)
     oled.text(date_str, 0, 0)
     oled.text(time_str, 0, 20)
 
-    temp_str = f"Temp: {temp_val}"
-    oled.text(temp_str, 0, 40)
-
-    if temp_val != "N/A":
+    if temp_val is not None and temp_val != "N/A":
+        temp_str = f"Temp: {temp_val:.1f}"
+        oled.text(temp_str, 0, 40)
         text_width = len(temp_str) * 8
         oled.blit(ssd1306.DEGREE, text_width, 40)
         oled.text("C", text_width + 8, 40)
+    else:
+        oled.text("Temp: N/A", 0, 40)
 
-    oled.text(f"Hum: {hum}", 0, 50)
+    if hum is not None and hum != "N/A":
+        oled.text(f"Hum: {hum:.1f} %", 0, 50)
+    else:
+        oled.text("Hum: N/A", 0, 50)
     oled.show()
 
 
 def oled_weather(timer):
-    """Displays weather data on the OLED."""
+    """
+    Displays weather data on the OLED screen.
+
+    Display Layout:
+    - Line 1: "Weather:"
+    - Line 2: Weather description
+    - Line 3: Temperature
+    - Line 4: Pressure
+    - Line 5: Humidity
+    - Line 6: Wind speed
+    """
     oled.fill(0)
     if weather_data:
         oled.text("Weather:", 0, 0)
         oled.text(weather_data["description"], 0, 10)
 
-        temp_str = f'Temp: {weather_data["temperature"]}'
+        temp_str = f'Temp: {weather_data["temperature"]:.1f}'
         oled.text(temp_str, 0, 20)
         text_width = len(temp_str) * 8
         oled.blit(ssd1306.DEGREE, text_width, 20)
         oled.text("C", text_width + 8, 20)
 
-        oled.text(f'Press: {weather_data["pressure"]}', 0, 30)
-        oled.text(f'Hum: {weather_data["humidity"]}', 0, 40)
+        oled.text(f'Press: {weather_data["pressure"]} hPa', 0, 30)
+        oled.text(f'Hum: {weather_data["humidity"]:.1f} %', 0, 40)
         oled.text(f'Wind: {weather_data["wind"]}', 0, 50)
     else:
         oled.text("Weather data", 0, 20)
@@ -126,10 +128,10 @@ def start_timer():
         period=5000, mode=Timer.PERIODIC, callback=display_handler
     )
 
-    # Timer to read local sensor data every 5 minutes
+    # Timer to read local sensor data every 15 minutes
     sensor_timer = Timer(1)
     sensor_timer.init(
-        period=300000, mode=Timer.PERIODIC, callback=update_sensor_readings
+        period=900000, mode=Timer.PERIODIC, callback=update_sensor_readings
     )
 
     # Timer to fetch weather data every 30 minutes

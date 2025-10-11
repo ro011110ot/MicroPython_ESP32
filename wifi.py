@@ -1,3 +1,6 @@
+"""
+This module handles the WiFi connection for the ESP32.
+"""
 import machine
 import network
 import ntp
@@ -5,12 +8,18 @@ import ntptime
 import time
 from secrets import secrets
 
-# WLAN-Konfiguration
+# WLAN configuration
 wlan = network.WLAN(network.WLAN.IF_STA)
 
 
-# Funktion: WLAN-Verbindung
 def connect():
+    """
+    Connects to the WiFi network using credentials from the secrets file.
+
+    If not connected, it will try to connect. If successful, it prints the
+    network configuration and sets the real-time clock (RTC) from an NTP server.
+    If it fails, it prints an error message.
+    """
     wlan.active(True)
     if not wlan.isconnected():
         print("connecting to network...")
@@ -25,4 +34,4 @@ def connect():
         rtc.datetime(ntp.cettime())
         print("RTC set to:", time.localtime())
     else:
-        print("Network ro011110ot is offline")
+        print("Network is offline")

@@ -1,20 +1,12 @@
+"""
+Main entry point for the ESP32 application.
+
+This script connects to the WiFi network and starts the OLED display timer.
+"""
 # Import own Functions
-import dht11
+
 import oled
 import wifi
-import time
-
-
-# Imports
-from time import sleep, localtime  # activate when measure every 30 Min !
 
 wifi.connect()
 oled.start_timer()
-
-# measure every 15 Min
-while True:
-    time_now = time.localtime()
-    min_now = time_now[4]
-    if min_now == 00 or min_now == 15 or min_now == 30 or min_now == 45:
-        dht11.dht11()
-    time.sleep(60)
