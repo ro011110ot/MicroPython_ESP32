@@ -15,7 +15,7 @@ This project turns an ESP32 into a weather and sensor monitoring station. It rea
 
 -   **`boot.py`**: This file is executed only once at boot-up. It is currently empty but can be used for special boot-time actions.
 -   **`main.py`**: The main entry point of the application. It connects to WiFi and starts the timers for sensor readings, weather updates, and display updates.
--   **`wifi.py`**: Handles the WiFi connection. It connects to the network using credentials stored in a `secrets.py` file (not included) and sets the real-time clock (RTC) from an NTP server.
+-   **`wifi.py`**: Handles the WiFi connection. It connects to the network using credentials stored in a `secrets.py` file and sets the real-time clock (RTC) from an NTP server.
 -   **`ntp.py`**: Provides a function to get the current time from an NTP server and adjust it to Central European Time (CET/CEST) with daylight saving.
 -   **`dht11.py`**: Reads temperature and humidity from the DHT11 sensor and logs the readings to a CSV file in the `/temp_history` directory.
 -   **`weather.py`**: Fetches weather data from the OpenWeatherMap API using credentials from a `secrets.py` file (not included) and logs the data to a CSV file in the `/temp_history` directory.
