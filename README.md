@@ -18,7 +18,7 @@ This project turns an ESP32 into a weather and sensor monitoring station. It rea
 -   **`wifi.py`**: Handles the WiFi connection. It connects to the network using credentials stored in a `secrets.py` file and sets the real-time clock (RTC) from an NTP server.
 -   **`ntp.py`**: Provides a function to get the current time from an NTP server and adjust it to Central European Time (CET/CEST) with daylight saving.
 -   **`dht11.py`**: Reads temperature and humidity from the DHT11 sensor and logs the readings to a CSV file in the `/temp_history` directory.
--   **`weather.py`**: Fetches weather data from the OpenWeatherMap API using credentials from a `secrets.py` file (not included) and logs the data to a CSV file in the `/temp_history` directory.
+-   **`weather.py`**: Fetches weather data from the OpenWeatherMap API using credentials from a `secrets.py` and logs the data to a CSV file in the `/temp_history` directory.
 -   **`oled.py`**: Manages the OLED display. It has functions to display the time, sensor data, and weather data. It also handles switching between the different display screens.
 -   **`ssd1306_driver.py`**: The driver for the SSD1306 OLED display. It provides low-level functions to control the display.
 -   **`own_timers.py`**: Initializes and starts the timers that periodically trigger sensor readings, weather data fetching, and display updates.
