@@ -1,4 +1,4 @@
-from machine import Pin, SoftI2C, Timer
+from machine import Pin, SoftI2C
 import ssd1306_driver as ssd1306
 import time
 import weather
@@ -22,18 +22,15 @@ oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c)
 
 
 def update_sensor_readings(timer):
-    """
-    Reads the last line of temp.csv and updates the global
-    temperature and humidity variables.
-    """
+    """Reads sensor data from dht11 and updates global variables."""
     global temp_val, hum
-    temp_val, hum = dht11.dht11()
+    temp_val, hum = dht11.measure()
 
 
 def update_weather_data(timer):
     """Fetches weather data and stores it globally."""
     global weather_data
-    weather_data = weather.weather()
+    weather_data = weather.call()
 
 
 def oled_time(timer):
@@ -112,30 +109,3 @@ def display_handler(timer):
     # Toggle for the next cycle, but only if there is weather data
     if weather_data:
         show_weather = not show_weather
-
-
-def start_timer():
-    """
-    Initializes and starts the timers for updating the display
-    and reading sensor data.
-    """
-    update_sensor_readings(None)
-    update_weather_data(None)  # Initial fetch
-
-    # Timer to switch between displays every 5 seconds
-    display_timer = Timer(0)
-    display_timer.init(
-        period=5000, mode=Timer.PERIODIC, callback=display_handler
-    )
-
-    # Timer to read local sensor data every 15 minutes
-    sensor_timer = Timer(1)
-    sensor_timer.init(
-        period=900000, mode=Timer.PERIODIC, callback=update_sensor_readings
-    )
-
-    # Timer to fetch weather data every 30 minutes
-    weather_timer = Timer(2)
-    weather_timer.init(
-        period=1800000, mode=Timer.PERIODIC, callback=update_weather_data
-    )

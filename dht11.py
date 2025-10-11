@@ -12,7 +12,7 @@ import os
 sensor = dht.DHT11(Pin(14))
 
 
-def dht11():
+def measure() -> tuple:
     """
     Reads temperature and humidity from the DHT11 sensor, logs the data to a CSV file,
     and returns the values.
