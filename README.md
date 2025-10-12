@@ -4,7 +4,7 @@ This project turns an ESP32 into a weather and sensor monitoring station. It rea
 
 ## Features
 
--   Connects to a WiFi network.
+-   Connects to a Wi-Fi network.
 -   Reads temperature and humidity from a DHT11 sensor.
 -   Fetches current weather data from OpenWeatherMap.
 -   Displays time, sensor data, and weather data on an OLED display.
@@ -14,8 +14,8 @@ This project turns an ESP32 into a weather and sensor monitoring station. It rea
 ## File Descriptions
 
 -   **`boot.py`**: This file is executed only once at boot-up. It is currently empty but can be used for special boot-time actions.
--   **`main.py`**: The main entry point of the application. It connects to WiFi and starts the timers for sensor readings, weather updates, and display updates.
--   **`wifi.py`**: Handles the WiFi connection. It connects to the network using credentials stored in a `secrets.py` file (not included) and sets the real-time clock (RTC) from an NTP server.
+-   **`main.py`**: The main entry point of the application. It connects to Wi-Fi and starts the timers for sensor readings, weather updates, and display updates.
+-   **`wifi.py`**: Handles the Wi-Fi connection. It connects to the network using credentials stored in a `secrets.py` file (not included) and sets the real-time clock (RTC) from an NTP server.
 -   **`ntp.py`**: Provides a function to get the current time from an NTP server and adjust it to Central European Time (CET/CEST) with daylight saving.
 -   **`dht11.py`**: Reads temperature and humidity from the DHT11 sensor and logs the readings to a CSV file in the `/temp_history` directory.
 -   **`weather.py`**: Fetches weather data from the OpenWeatherMap API using credentials from a `secrets.py` file (not included) and logs the data to a CSV file in the `/temp_history` directory.
@@ -39,8 +39,8 @@ This project turns an ESP32 into a weather and sensor monitoring station. It rea
 
     '''python
     secrets = {
-        "ssid": "YOUR_WIFI_SSID",
-        "password": "YOUR_WIFI_PASSWORD",
+        "ssid": "YOUR_WI-FI_SSID",
+        "password": "YOUR_WI-FI_PASSWORD",
         "openweather_api_key": "YOUR_OPENWEATHERMAP_API_KEY",
         "city": "YOUR_CITY",
         "country_code": "YOUR_COUNTRY_CODE"
@@ -52,7 +52,7 @@ This project turns an ESP32 into a weather and sensor monitoring station. It rea
 
 ## How it Works
 
-The `main.py` script is the starting point. It first connects to the WiFi network using the `wifi.py` module. Once connected, it calls `own_timers.start_timer()` to set up and start the timers.
+The `main.py` script is the starting point. It first connects to the Wi-Fi network using the `wifi.py` module. Once connected, it calls `own_timers.start_timer()` to set up and start the timers.
 
 There are two main timers:
 
