@@ -7,13 +7,14 @@ Timer objects do not support passing arguments to callbacks.
 
 # Standard Library
 import time
+import framebuf
 
 # Third-Party
 from machine import Pin, SoftI2C
 
 # Local Application
 import dht11
-import ssd1306_driver as ssd1306
+import ssd1306
 import weather
 
 # --- Global Variables ---
@@ -28,6 +29,12 @@ i2c = SoftI2C(scl=Pin(22), sda=Pin(21))
 oled_width = 128
 oled_height = 64
 oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c)
+
+# --- Degree Symbol ---
+# Create an 8x8 framebuffer for the degree symbol.
+_degree_data = bytearray([0x00, 0x38, 0x44, 0x44, 0x38, 0x00, 0x00, 0x00])
+DEGREE = framebuf.FrameBuffer(_degree_data, 8, 8, framebuf.MONO_HLSB)
+
 
 # --- Functions ---
 
@@ -60,7 +67,7 @@ def oled_time(timer):
         temp_str = f"Temp: {temp_val:.1f}"
         oled.text(temp_str, 0, 40)
         text_width = len(temp_str) * 8
-        oled.blit(ssd1306.DEGREE, text_width, 40)
+        oled.blit(DEGREE, text_width, 40)
         oled.text("C", text_width + 8, 40)
     else:
         oled.text("Temp: N/A", 0, 40)
@@ -89,7 +96,7 @@ def oled_weather(timer):
         temp_str = f"Temp: {weather_data[0]:.1f}"
         oled.text(temp_str, 0, 20)
         text_width = len(temp_str) * 8
-        oled.blit(ssd1306.DEGREE, text_width, 20)
+        oled.blit(DEGREE, text_width, 20)
         oled.text("C", text_width + 8, 20)
 
         # Pressure

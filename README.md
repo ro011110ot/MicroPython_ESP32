@@ -20,7 +20,6 @@ This project turns an ESP32 into a weather and sensor monitoring station. It rea
 -   **`dht11.py`**: Reads temperature and humidity from the DHT11 sensor and logs the readings to a CSV file in the `/temp_history` directory.
 -   **`weather.py`**: Fetches weather data from the OpenWeatherMap API using credentials from a `secrets.py` file (not included) and logs the data to a CSV file in the `/temp_history` directory.
 -   **`oled.py`**: Manages the OLED display. It has functions to display the time, sensor data, and weather data. It also handles switching between the different display screens.
--   **`ssd1306_driver.py`**: The driver for the SSD1306 OLED display. It provides low-level functions to control the display.
 -   **`own_timers.py`**: Initializes and starts the timers that periodically trigger sensor readings, weather data fetching, and display updates.
 -   **`temp_history/`**: This directory stores the CSV log files for temperature, humidity and weather data.
 
@@ -34,9 +33,13 @@ This project turns an ESP32 into a weather and sensor monitoring station. It rea
 ## Setup
 
 1.  **Install MicroPython:** Flash your ESP32 with the latest version of MicroPython.
-2.  **Copy Files:** Copy all the `.py` files to the root directory of your ESP32.
-3.  **Create `secrets.py`:** Create a file named `secrets.py` in the root directory with the following content:
-
+2.  **Install Libraries:** Connect to your ESP32's REPL and run the following commands to install the necessary library for the OLED display:
+    '''python
+    import mip
+    mip.install("ssd1306")
+    '''
+3.  **Copy Files:** Copy all the project's `.py` files to the root directory of your ESP32.
+4.  **Create `secrets.py`:** Create a file named `secrets.py` in the root directory with the following content:
     '''python
     secrets = {
         "ssid": "YOUR_WI-FI_SSID",
@@ -46,9 +49,8 @@ This project turns an ESP32 into a weather and sensor monitoring station. It rea
         "country_code": "YOUR_COUNTRY_CODE"
     }
     '''
-
-4.  **Connect Hardware:** Connect the DHT11 sensor and the OLED display to your ESP32 according to the pin configurations in `dht11.py` and `oled.py`.
-5.  **Run:** The `main.py` script will run automatically on boot.
+5.  **Connect Hardware:** Connect the DHT11 sensor and the OLED display to your ESP32 according to the pin configurations in `dht11.py` and `oled.py`.
+6.  **Run:** The `main.py` script will run automatically on boot.
 
 ## How it Works
 
