@@ -39,7 +39,7 @@ def run_system_tasks():
         if not wifi.is_connected():
             print("System Task: WiFi connection lost. Attempting reconnection...")
             # Re-run the full connection function to handle all cases
-            wifi.connect_wifi(secrets["ssid"], secrets["password"])
+            wifi.connect_wifi()
 
         wlan_check_last_ms = current_ms
 

@@ -15,7 +15,7 @@ This project turns an ESP32 into a weather and sensor monitoring station. It rea
 
 -   **`boot.py`**: This file is executed only once at boot-up. It is currently empty but can be used for special boot-time actions.
 -   **`main.py`**: The main entry point of the application. It connects to Wi-Fi and starts the timers for sensor readings, weather updates, and display updates.
--   **`wifi.py`**: Handles the Wi-Fi connection. It connects to the network using credentials stored in a `secrets.py` file (not included) and sets the real-time clock (RTC) from an NTP server.
+-   **`wifi.py`**: Handles the Wi-Fi connection. It connects to the network by trying a list of credentials stored in `secrets.py`.
 -   **`ntp.py`**: Provides a function to get the current time from an NTP server and adjust it to Central European Time (CET/CEST) with daylight saving.
 -   **`dht11.py`**: Reads temperature and humidity from the DHT11 sensor and logs the readings to a CSV file in the `/temp_history` directory.
 -   **`weather.py`**: Fetches weather data from the OpenWeatherMap API using credentials from a `secrets.py` file (not included) and logs the data to a CSV file in the `/temp_history` directory.
@@ -39,11 +39,13 @@ This project turns an ESP32 into a weather and sensor monitoring station. It rea
     mip.install("ssd1306")
     '''
 3.  **Copy Files:** Copy all the project's `.py` files to the root directory of your ESP32.
-4.  **Create `secrets.py`:** Create a file named `secrets.py` in the root directory with the following content:
+4.  **Create `secrets.py`:** Create a file named `secrets.py` in the root directory with the following content. You can add multiple Wi-Fi networks to the `wifi_credentials` list. The system will try to connect to them in the order they are listed.
     '''python
     secrets = {
-        "ssid": "YOUR_WI-FI_SSID",
-        "password": "YOUR_WI-FI_PASSWORD",
+        "wifi_credentials": [
+            {"ssid": "YOUR_FIRST_WIFI_SSID", "password": "YOUR_FIRST_WIFI_PASSWORD"},
+            {"ssid": "YOUR_SECOND_WIFI_SSID", "password": "YOUR_SECOND_WIFI_PASSWORD"},
+        ],
         "openweather_api_key": "YOUR_OPENWEATHERMAP_API_KEY",
         "city": "YOUR_CITY",
         "country_code": "YOUR_COUNTRY_CODE"

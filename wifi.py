@@ -15,6 +15,9 @@ from machine import Pin
 # --- Global WLAN object ---
 wlan = None
 
+# --- Third-Party ---
+from secrets import secrets
+
 # --- LED Configuration ---
 LED_PIN = 2
 status_led = Pin(LED_PIN, Pin.OUT)
@@ -29,14 +32,13 @@ def flash_led(duration_ms, cycles, delay_ms):
         time.sleep_ms(delay_ms)
 
 
-def connect_wifi(ssid, password, max_retries=3, retry_delay_s=5, max_wait_s=10):
+def connect_wifi(max_retries=3, retry_delay_s=5, max_wait_s=10):
     """
     Connects to the Wi-Fi network with retries for robustness.
+    It iterates through a list of predefined Wi-Fi credentials from secrets.py.
 
     Args:
-        ssid (str): The Wi-Fi network name (SSID).
-        password (str): The Wi-Fi password.
-        max_retries (int): The maximum number of connection attempts.
+        max_retries (int): The maximum number of connection attempts for each credential.
         retry_delay_s (int): The delay in seconds between retries.
         max_wait_s (int): The maximum time to wait for a single connection attempt.
 
@@ -45,41 +47,46 @@ def connect_wifi(ssid, password, max_retries=3, retry_delay_s=5, max_wait_s=10):
     """
     global wlan
     wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
 
-    for attempt in range(max_retries):
-        print(f"WiFi connection attempt {attempt + 1}/{max_retries}...")
+    for credential in secrets["wifi_credentials"]:
+        ssid = credential["ssid"]
+        password = credential["password"]
+        print(f"Attempting to connect to '{ssid}'...")
 
-        # Deactivate and reactivate the interface for a clean state
-        wlan.active(False)
-        time.sleep_ms(500)
-        wlan.active(True)
+        for attempt in range(max_retries):
+            print(f"  Attempt {attempt + 1}/{max_retries}...")
 
-        try:
-            wlan.connect(ssid, password)
-        except OSError as e:
-            print(f"  Connection command failed: {e}")
-            if attempt < max_retries - 1:
-                time.sleep(retry_delay_s)
-            continue  # Go to next retry
+            try:
+                wlan.connect(ssid, password)
+            except OSError as e:
+                print(f"    Connection command failed: {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay_s)
+                continue  # Go to next retry
 
-        # Wait for connection, flashing the LED
-        wait_cycles = int(max_wait_s * 1000 / 200)
-        for _ in range(wait_cycles):
+            # Wait for connection, flashing the LED
+            wait_cycles = int(max_wait_s * 1000 / 200)
+            for _ in range(wait_cycles):
+                if wlan.isconnected():
+                    break
+                flash_led(50, 1, 150)
+
             if wlan.isconnected():
-                break
-            flash_led(50, 1, 150)
+                print(f"WiFi connected successfully to '{ssid}'.")
+                flash_led(500, 3, 500)  # Success signal
+                status_led.value(0)
+                return wlan
+            else:
+                print("    Connection attempt failed.")
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay_s)
+        
+        wlan.disconnect()
+        time.sleep_ms(500)
 
-        if wlan.isconnected():
-            print("WiFi connected successfully.")
-            flash_led(500, 3, 500)  # Success signal
-            status_led.value(0)
-            return wlan
-        else:
-            print("  Connection attempt failed.")
-            if attempt < max_retries - 1:
-                time.sleep(retry_delay_s)
 
-    print(f"Failed to connect to WiFi after {max_retries} attempts.")
+    print(f"Failed to connect to any WiFi network after trying all credentials.")
     flash_led(100, 5, 100)  # Failure signal
     status_led.value(0)
     wlan = None

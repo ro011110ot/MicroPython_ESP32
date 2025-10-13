@@ -11,7 +11,6 @@ import utime
 # Local Application
 from ntp import set_rtc_from_ntp
 from own_timers import start_timer_tasks
-from secrets import secrets
 from system_tasks import run_system_tasks
 from wifi import connect_wifi, is_connected
 
@@ -21,7 +20,7 @@ def main():
     print("--- Starting MicroPython ESP32 Sensor Station ---")
 
     # 1. Initial Wi-Fi Connection
-    connect_wifi(secrets["ssid"], secrets["password"])
+    connect_wifi()
 
     if not is_connected():
         print("FATAL: Initial WiFi connection failed. System will halt.")
