@@ -13,9 +13,7 @@ import framebuf
 from machine import Pin, SoftI2C
 
 # Local Application
-import dht11
 import ssd1306
-import weather
 
 # --- Global Variables ---
 # These variables are used to share state between the timer callbacks.
@@ -39,16 +37,19 @@ DEGREE = framebuf.FrameBuffer(_degree_data, 8, 8, framebuf.MONO_HLSB)
 # --- Functions ---
 
 
-def update_sensor_readings(timer):
-    """Reads sensor data from dht11 and updates global variables."""
+def set_sensor_data(data):
+    """Updates the global sensor values from an external source."""
     global temp_val, hum
-    temp_val, hum = dht11.get_data()
+    if data and data[0] is not None and data[1] is not None:
+        temp_val, hum = data
+    else:
+        temp_val, hum = "N/A", "N/A"
 
 
-def update_weather_data(timer):
-    """Fetches weather data from the API and stores it globally."""
+def set_weather_data(data):
+    """Updates the global weather data from an external source."""
     global weather_data
-    weather_data = weather.get_data()
+    weather_data = data
 
 
 def oled_time(timer):

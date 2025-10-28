@@ -53,7 +53,7 @@ def log_data(dht_data, owm_data):
 
     # 4. Create the comma-separated string line
     # Replace None with empty string for cleaner CSV output
-    data_line = ",".join(map(lambda x: str(x) if x is not None else '', data_row))
+    data_line = ",".join(str(x) if x is not None else '' for x in data_row)
 
     # 5. Write to the file, adding a header if the file is new
     try:

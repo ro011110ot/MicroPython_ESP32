@@ -11,38 +11,41 @@ Two timers are used:
 from machine import Timer
 
 # Local Application
-import data_logger
-import oled
-import wifi
+import data_logger # For logging data
+import dht11       # For reading the DHT11 sensor
+import oled        # For updating the display
+import weather     # For fetching weather data
+import wifi        # For checking the connection status
 
 
 def weather_dht11_wrapper(timer):
     """
     Timer callback to periodically update sensor, weather data, and log it.
 
-    This function is designed to be called by a `machine.Timer` instance.
+    This function orchestrates the data flow:
+    1. Fetches data from the DHT11 sensor and OpenWeatherMap API.
+    2. Updates the OLED module with the new data.
+    3. Logs the data to a CSV file.
     """
-    # 1. Always update local sensor readings
+    # 1. Fetch data from sources
     print("Task: Reading local DHT11 sensor...")
-    oled.update_sensor_readings(timer)
+    dht_data = dht11.get_data()  # Returns (temp, hum) or (None, None)
 
-    # 2. Check for Wi-Fi and update weather data if connected
+    owm_data = (None,) * 6  # Default to None tuple
     if wifi.is_connected():
         print("Task: Fetching weather data from API...")
-        oled.update_weather_data(timer)
+        owm_data = weather.get_data()
+    else:
+        print("Task: Skipping weather data fetch, no WiFi.")
 
-    # 3. Log the collected data to the CSV file
+    # 2. Update the OLED module's state with the new data
+    # The OLED display will use this data on its next refresh cycle.
+    oled.set_sensor_data(dht_data)
+    oled.set_weather_data(owm_data)
+
+    # 3. Log the data
     print("Task: Logging data...")
-    dht_data = (oled.temp_val, oled.hum)
-    owm_data = oled.weather_data
-
-    # Only log if we have valid DHT data
-    if dht_data[0] is not None and dht_data[1] is not None:
-        # If weather data is None (e.g., no Wi-Fi), create an empty tuple
-        if owm_data is None:
-            owm_data = (None, None, None, None, None, None)
-
-        data_logger.log_data(dht_data, owm_data)
+    data_logger.log_data(dht_data, owm_data)
 
 
 def start_timer_tasks():

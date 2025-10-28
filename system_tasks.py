@@ -48,6 +48,7 @@ def run_system_tasks():
         if wifi.is_connected():
             print("System Task: Performing 6-hour NTP sync...")
             ntp.set_rtc_from_ntp()
-            ntp_sync_last_ms = current_ms
         else:
             print("System Task: Skipping NTP sync, WLAN is disconnected.")
+        # Update the timestamp regardless of success to avoid rapid retries
+        ntp_sync_last_ms = current_ms
